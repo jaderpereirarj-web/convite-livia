@@ -1,0 +1,1039 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>A Floresta Encantada da Lívia</title>
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Berkshire+Swash&family=Quicksand:wght@400;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            /* Paleta de Cores Baseada na Arte */
+            --red-cap: #D32F2F;
+            --dark-red: #8B0000;
+            --forest-green: #2E4E2C;
+            --moss-green: #556B2F;
+            --wood-brown: #5C3A21;
+            --wood-light: #8B5A2B;
+            --paper-beige: #FDF6E3;
+            --gold: #FFD700;
+            --pool-blue: #4FC3F7;
+            --pool-dark: #0288D1;
+            
+            /* Tipografia */
+            --font-title: 'Berkshire Swash', cursive;
+            --font-text: 'Quicksand', sans-serif;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            *, ::before, ::after {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+                scroll-behavior: auto !important;
+            }
+        }
+
+        body {
+            background-color: #111; /* Desktop background */
+            background-image: radial-gradient(circle at center, #2E4E2C 0%, #111 100%);
+            font-family: var(--font-text);
+            color: #333;
+            overflow-x: hidden;
+            display: flex;
+            justify-content: center;
+        }
+
+        /* Container Principal (Mobile First) */
+        .mobile-container {
+            width: 100%;
+            max-width: 500px; /* Limite para Desktop */
+            background-color: var(--paper-beige);
+            min-height: 100vh;
+            position: relative;
+            box-shadow: 0 0 30px rgba(0,0,0,0.8);
+            overflow: hidden;
+        }
+
+        /* Oculta scrollbar mas permite rolagem */
+        .mobile-container::-webkit-scrollbar {
+            display: none;
+        }
+
+        /* Tipografia Base */
+        h1, h2, h3 {
+            font-family: var(--font-title);
+            font-weight: normal;
+            text-align: center;
+        }
+        
+        p {
+            text-align: center;
+            line-height: 1.6;
+            font-size: 1.1rem;
+        }
+
+        /* =========================================
+           TELA DE ABERTURA
+        ========================================= */
+        .hero {
+            height: 100vh;
+            background: linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.6)), url('convite.png') center/cover no-repeat;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            z-index: 10;
+            color: white;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.7);
+        }
+
+        .hero h2 {
+            font-size: 1.8rem;
+            color: var(--gold);
+            margin-bottom: 10px;
+            animation: fadeInDown 1.5s ease-out;
+        }
+
+        .hero h1 {
+            font-size: 2.8rem;
+            color: white;
+            margin-bottom: 5px;
+            animation: scaleIn 2s ease-out;
+        }
+
+        .hero .subtitle {
+            font-size: 1.5rem;
+            font-family: var(--font-title);
+            color: #FFCDD2;
+            margin-bottom: 40px;
+            animation: fadeInUp 1.5s ease-out;
+        }
+
+        .btn-enter {
+            background: var(--red-cap);
+            color: white;
+            border: 3px solid #FFCDD2;
+            padding: 15px 30px;
+            font-size: 1.2rem;
+            font-family: var(--font-title);
+            border-radius: 30px;
+            cursor: pointer;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.5);
+            transition: transform 0.3s, box-shadow 0.3s;
+            animation: pulseBtn 2s infinite;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            text-decoration: none;
+        }
+
+        .btn-enter:hover, .btn-enter:active {
+            transform: scale(1.05);
+            background: var(--dark-red);
+        }
+
+        /* =========================================
+           OVERLAY DE VÍDEO
+        ========================================= */
+        #video-overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: black;
+            z-index: 9999;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            transition: opacity 1s ease;
+        }
+
+        #video-overlay.hidden {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        #intro-video {
+            width: 100%;
+            max-width: 500px;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .skip-video {
+            position: absolute;
+            bottom: 30px;
+            background: rgba(255,255,255,0.2);
+            color: white;
+            border: 1px solid white;
+            padding: 8px 20px;
+            border-radius: 20px;
+            font-family: var(--font-text);
+            cursor: pointer;
+            backdrop-filter: blur(5px);
+        }
+
+        /* =========================================
+           CONTROLE DE ÁUDIO
+        ========================================= */
+        .audio-control {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 100;
+            background: rgba(255,255,255,0.8);
+            border: 2px solid var(--wood-brown);
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            display: none; /* Só aparece depois de entrar */
+            justify-content: center;
+            align-items: center;
+            font-size: 1.2rem;
+            cursor: pointer;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+            transition: transform 0.2s;
+        }
+        .audio-control:active { transform: scale(0.9); }
+
+        /* =========================================
+           ESTRUTURA DAS SEÇÕES (LIVRO/FLORESTA)
+        ========================================= */
+        section {
+            padding: 60px 20px;
+            position: relative;
+        }
+
+        /* Elementos Decorativos */
+        .wood-board {
+            background-color: var(--wood-light);
+            background-image: 
+                linear-gradient(45deg, rgba(0,0,0,0.1) 25%, transparent 25%, transparent 75%, rgba(0,0,0,0.1) 75%, rgba(0,0,0,0.1)),
+                linear-gradient(45deg, rgba(0,0,0,0.1) 25%, transparent 25%, transparent 75%, rgba(0,0,0,0.1) 75%, rgba(0,0,0,0.1));
+            background-size: 20px 20px;
+            background-position: 0 0, 10px 10px;
+            border: 6px solid var(--wood-brown);
+            border-radius: 15px;
+            padding: 30px 20px;
+            color: #FFF;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.4), inset 0 0 15px rgba(0,0,0,0.5);
+            position: relative;
+            margin: 0 auto;
+            max-width: 90%;
+        }
+
+        .wood-board::before, .wood-board::after {
+            content: '釘';
+            position: absolute;
+            color: #333;
+            font-size: 0.8rem;
+            text-shadow: 1px 1px 0 rgba(255,255,255,0.2);
+        }
+        .wood-board::before { top: 10px; left: 10px; }
+        .wood-board::after { top: 10px; right: 10px; }
+
+        .paper-card {
+            background: var(--paper-beige);
+            border: 2px dashed var(--wood-brown);
+            border-radius: 10px;
+            padding: 25px;
+            box-shadow: 2px 2px 10px rgba(0,0,0,0.1);
+            color: var(--wood-brown);
+            position: relative;
+            margin: 20px auto;
+            max-width: 90%;
+        }
+
+        /* =========================================
+           SEÇÃO 1 - HISTÓRIA
+        ========================================= */
+        #historia {
+            background: url('convite.png') center/cover fixed;
+            color: white;
+            text-shadow: 1px 1px 3px black;
+        }
+        .story-text {
+            background: rgba(46, 78, 44, 0.85); /* Verde floresta translúcido */
+            padding: 30px;
+            border-radius: 15px;
+            border: 2px solid var(--gold);
+            backdrop-filter: blur(3px);
+        }
+
+        /* =========================================
+           SEÇÃO 2 - A FESTA (PLACA DE MADEIRA)
+        ========================================= */
+        #festa {
+            background: #e8f5e9; /* Verde bem claro */
+            background-image: radial-gradient(#c8e6c9 1px, transparent 1px);
+            background-size: 20px 20px;
+        }
+        
+        .name-highlight {
+            color: var(--red-cap);
+            font-size: 3rem;
+            display: block;
+            margin: 10px 0;
+            text-shadow: 2px 2px 0px #fff, 3px 3px 0px rgba(0,0,0,0.2);
+        }
+        
+        .age-ribbon {
+            background: var(--red-cap);
+            color: white;
+            display: inline-block;
+            padding: 5px 20px;
+            transform: rotate(-2deg);
+            border-radius: 5px;
+            box-shadow: 2px 4px 8px rgba(0,0,0,0.3);
+            font-family: var(--font-text);
+            font-weight: bold;
+            font-size: 1.2rem;
+            border: 1px dashed white;
+        }
+
+        /* =========================================
+           SEÇÃO 3 - QUANDO (CONTAGEM)
+        ========================================= */
+        #quando .wood-board h2 {
+            color: var(--gold);
+            margin-bottom: 20px;
+            font-size: 1.8rem;
+        }
+        
+        .date-time {
+            font-size: 1.4rem;
+            font-weight: bold;
+            margin-bottom: 20px;
+            text-shadow: 1px 1px 2px black;
+        }
+
+        .countdown-grid {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .countdown-item {
+            background: rgba(255,255,255,0.1);
+            border: 1px solid rgba(255,255,255,0.3);
+            border-radius: 8px;
+            padding: 10px;
+            width: 70px;
+            backdrop-filter: blur(2px);
+        }
+
+        .countdown-item span {
+            display: block;
+            font-size: 1.8rem;
+            font-family: var(--font-title);
+            color: var(--gold);
+        }
+
+        .countdown-item label {
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        /* =========================================
+           SEÇÃO 4 - ONDE (MAPA)
+        ========================================= */
+        #onde {
+            background: #fff3e0;
+        }
+        .address-box {
+            font-size: 1.2rem;
+            margin: 20px 0;
+            font-weight: 600;
+        }
+        .address-box span {
+            display: block;
+            font-size: 1rem;
+            font-weight: normal;
+            margin-top: 5px;
+        }
+
+        /* =========================================
+           SEÇÃO 5 - RSVP
+        ========================================= */
+        #rsvp {
+            background: var(--moss-green);
+            color: white;
+        }
+        
+        #rsvp .paper-card {
+            background: var(--paper-beige);
+            color: var(--wood-brown);
+        }
+
+        .rsvp-form {
+            display: none; /* Aparece ao clicar "SIM" */
+            flex-direction: column;
+            gap: 15px;
+            margin-top: 20px;
+            text-align: left;
+        }
+
+        .rsvp-form.active {
+            display: flex;
+            animation: fadeIn 0.5s;
+        }
+
+        .form-group label {
+            font-weight: bold;
+            display: block;
+            margin-bottom: 5px;
+            font-size: 0.9rem;
+        }
+
+        .form-group input[type="text"] {
+            width: 100%;
+            padding: 10px;
+            border: 2px solid var(--wood-brown);
+            border-radius: 5px;
+            font-family: var(--font-text);
+            font-size: 1rem;
+            background: #fff;
+        }
+
+        .counter-control {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .counter-btn {
+            background: var(--wood-brown);
+            color: white;
+            border: none;
+            width: 35px; height: 35px;
+            border-radius: 50%;
+            font-size: 1.2rem;
+            cursor: pointer;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+
+        .counter-value {
+            font-size: 1.2rem;
+            font-weight: bold;
+            min-width: 20px;
+            text-align: center;
+        }
+
+        /* =========================================
+           SEÇÃO 6 - PISCINA
+        ========================================= */
+        #piscina {
+            background: linear-gradient(180deg, #E1F5FE 0%, #29B6F6 100%);
+            position: relative;
+            padding-top: 80px;
+            overflow: hidden;
+            color: var(--pool-dark);
+        }
+
+        /* Ondas no topo */
+        .wave-top {
+            position: absolute;
+            top: 0; left: 0; width: 100%;
+            overflow: hidden;
+            line-height: 0;
+        }
+        .wave-top svg {
+            display: block;
+            width: calc(100% + 1.3px);
+            height: 50px;
+        }
+
+        #piscina h2 {
+            color: #01579B;
+            font-size: 2rem;
+        }
+
+        .water-drop {
+            position: absolute;
+            background: rgba(255,255,255,0.6);
+            border-radius: 50% 50% 50% 5px;
+            transform: rotate(-45deg);
+            animation: fall linear infinite;
+        }
+
+        /* =========================================
+           SEÇÃO FINAL
+        ========================================= */
+        #fim {
+            background: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.9)), url('convite.png') bottom/cover;
+            color: white;
+            min-height: 60vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            position: relative;
+        }
+
+        .firefly {
+            position: absolute;
+            width: 4px; height: 4px;
+            background: var(--gold);
+            border-radius: 50%;
+            box-shadow: 0 0 10px var(--gold), 0 0 20px var(--gold);
+            animation: float 4s infinite ease-in-out alternate;
+        }
+
+        /* =========================================
+           BOTÕES GENÉRICOS E LINKS
+        ========================================= */
+        .btn-action {
+            display: inline-block;
+            background: var(--red-cap);
+            color: white;
+            text-decoration: none;
+            padding: 12px 25px;
+            border-radius: 25px;
+            font-family: var(--font-title);
+            font-size: 1.2rem;
+            border: 2px solid #FFCDD2;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+            margin-top: 15px;
+            cursor: pointer;
+            transition: transform 0.2s, background 0.2s;
+            text-align: center;
+            width: 100%;
+        }
+        .btn-action:hover, .btn-action:active {
+            transform: scale(1.05);
+            background: var(--dark-red);
+        }
+
+        .btn-secondary {
+            background: #B0BEC5;
+            border-color: #ECEFF1;
+            color: #37474F;
+        }
+        .btn-secondary:hover, .btn-secondary:active {
+            background: #90A4AE;
+        }
+
+        /* =========================================
+           MENU FLUTUANTE
+        ========================================= */
+        .fab-container {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 100;
+            display: flex;
+            flex-direction: column-reverse;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .fab {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: var(--red-cap);
+            color: white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 1.5rem;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.4);
+            cursor: pointer;
+            border: 2px solid var(--gold);
+            transition: transform 0.3s;
+        }
+
+        .fab-menu {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            opacity: 0;
+            pointer-events: none;
+            transform: translateY(20px);
+            transition: all 0.3s ease;
+        }
+
+        .fab-menu.open {
+            opacity: 1;
+            pointer-events: auto;
+            transform: translateY(0);
+        }
+
+        .fab-item {
+            width: 40px; height: 40px;
+            border-radius: 50%;
+            background: var(--wood-brown);
+            color: white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            text-decoration: none;
+            font-size: 1.2rem;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.3);
+        }
+
+        /* =========================================
+           ANIMAÇÕES (SCROLL REVEAL & CSS)
+        ========================================= */
+        .reveal {
+            opacity: 0;
+            transform: translateY(40px);
+            transition: all 0.8s ease-out;
+        }
+        .reveal.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        @keyframes fadeInDown {
+            from { opacity: 0; transform: translateY(-30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes scaleIn {
+            from { opacity: 0; transform: scale(0.8); }
+            to { opacity: 1; transform: scale(1); }
+        }
+        @keyframes pulseBtn {
+            0% { box-shadow: 0 0 0 0 rgba(211, 47, 47, 0.7); }
+            70% { box-shadow: 0 0 0 15px rgba(211, 47, 47, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(211, 47, 47, 0); }
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        @keyframes fall {
+            0% { top: -10%; opacity: 1; }
+            100% { top: 110%; opacity: 0; }
+        }
+        @keyframes float {
+            0% { transform: translateY(0px) translateX(0px); }
+            100% { transform: translateY(-20px) translateX(10px); }
+        }
+        @keyframes wiggle {
+            0%, 100% { transform: rotate(0deg); }
+            25% { transform: rotate(-10deg); }
+            75% { transform: rotate(10deg); }
+        }
+        .wiggle-anim { animation: wiggle 0.5s ease-in-out; }
+        .fly-away { transition: transform 2s; transform: translate(200px, -200px) scale(0); opacity: 0; }
+
+        /* Interativos */
+        .interactive { cursor: pointer; display: inline-block; }
+    </style>
+</head>
+<body>
+
+    <!-- Container Principal Mobile -->
+    <div class="mobile-container" id="main-container">
+
+        <!-- Áudio Ambiente -->
+        <!-- Substitua 'musica.mp3' pelo caminho do seu arquivo de áudio -->
+        <audio id="bg-audio" loop>
+            <source src="musica.mp3" type="audio/mpeg">
+        </audio>
+
+        <!-- Controle de Áudio Fixo -->
+        <div class="audio-control" id="btn-audio" onclick="toggleAudio()">
+            🔊
+        </div>
+
+        <!-- Menu Flutuante -->
+        <div class="fab-container">
+            <div class="fab-menu" id="fab-menu">
+                <a href="#festa" class="fab-item" title="Festa">📅</a>
+                <a href="#onde" class="fab-item" title="Local">📍</a>
+                <a href="#rsvp" class="fab-item" title="Confirmar">❤️</a>
+                <a href="#inicio" class="fab-item" title="Início">🏠</a>
+            </div>
+            <div class="fab" onclick="toggleFab()">
+                📖
+            </div>
+        </div>
+
+        <!-- Overlay de Vídeo -->
+        <!-- O vídeo deve se chamar 'convite.mp4' e estar na mesma pasta -->
+        <div id="video-overlay" class="hidden">
+            <video id="intro-video" playsinline>
+                <source src="convite.mp4" type="video/mp4">
+                Seu navegador não suporta o vídeo.
+            </video>
+            <button class="skip-video" onclick="closeVideo()">Pular Vídeo ➔</button>
+        </div>
+
+        <!-- TELA DE ABERTURA -->
+        <section id="inicio" class="hero">
+            <div style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none;" id="hero-particles"></div>
+            
+            <h2>Era uma vez...</h2>
+            <h1>UMA FESTA ENCANTADA!</h1>
+            <p class="subtitle">Lívia faz 3 aninhos!</p>
+            
+            <button class="btn-enter" onclick="startExperience()">
+                🍎 ENTRAR NA HISTÓRIA
+            </button>
+        </section>
+
+        <!-- SEÇÃO 1: HISTÓRIA -->
+        <section id="historia" class="reveal">
+            <div class="story-text">
+                <h2 style="color: var(--gold); margin-bottom: 15px; font-size: 2rem;">Era uma vez...</h2>
+                <p>Uma menina muito especial encontrou uma floresta encantada onde uma grande aventura estava prestes a começar...</p>
+                <div style="text-align: center; margin-top: 15px; font-size: 2rem;">
+                    <span class="interactive" onclick="this.classList.add('fly-away')">🦋</span>
+                    <span class="interactive" onclick="this.classList.add('wiggle-anim'); setTimeout(()=>this.classList.remove('wiggle-anim'), 500)">🐺</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- SEÇÃO 2: A FESTA -->
+        <section id="festa" class="reveal">
+            <div class="wood-board">
+                <h2 style="font-size: 1.5rem; text-transform: uppercase;">Uma Festa Encantada!</h2>
+                <p style="font-size: 0.9rem; margin-bottom: 15px;">E você faz parte dessa história!</p>
+                
+                <div style="background: rgba(255,255,255,0.1); border-radius: 10px; padding: 20px 10px;">
+                    <span class="name-highlight">LÍVIA</span>
+                    <span class="age-ribbon">FAZ 3 ANINHOS!</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- SEÇÃO 3: QUANDO -->
+        <section id="quando" class="reveal">
+            <div class="wood-board" style="background-color: #6D4C41; border-color: #3E2723;">
+                <h2>Quando vamos nos encontrar?</h2>
+                <div style="margin: 20px 0; color: #FFF8E1;">
+                    <p class="date-time">📅 30 DE AGOSTO DE 2026</p>
+                    <p class="date-time">⏰ A PARTIR DAS 14H</p>
+                </div>
+                
+                <p style="font-size: 0.9rem; margin-top: 20px;">A aventura começa em:</p>
+                <div class="countdown-grid" id="countdown">
+                    <div class="countdown-item"><span id="cd-days">00</span><label>Dias</label></div>
+                    <div class="countdown-item"><span id="cd-hours">00</span><label>Horas</label></div>
+                    <div class="countdown-item"><span id="cd-mins">00</span><label>Min</label></div>
+                    <div class="countdown-item"><span id="cd-secs">00</span><label>Seg</label></div>
+                </div>
+                <h3 id="cd-hoje" style="display:none; color: var(--gold); margin-top: 15px; font-size: 2rem;">É HOJE! ❤️</h3>
+            </div>
+        </section>
+
+        <!-- SEÇÃO 4: ONDE -->
+        <section id="onde" class="reveal">
+            <div class="paper-card" style="text-align: center;">
+                <h2 style="color: var(--dark-red); margin-bottom: 15px; font-size: 1.8rem;">Onde fica a nossa floresta encantada?</h2>
+                
+                <div class="address-box">
+                    ESPAÇO MIX
+                    <span>Rua Genuíno Siqueira, 754<br>Jardim Meriti</span>
+                </div>
+                
+                <a href="https://maps.google.com/?q=Rua+Genuino+Siqueira+754+Jardim+Meriti" target="_blank" class="btn-action">
+                    📍 COMO CHEGAR
+                </a>
+            </div>
+        </section>
+
+        <!-- SEÇÃO 5: RSVP -->
+        <section id="rsvp" class="reveal">
+            <div style="text-align: center; margin-bottom: 20px;">
+                <h2 style="color: var(--gold); font-size: 2rem;">Você vem para essa aventura?</h2>
+                <p style="margin-top: 10px;">A Chapeuzinho Vermelho está esperando por você!</p>
+            </div>
+            
+            <div class="paper-card">
+                <div id="rsvp-buttons">
+                    <button class="btn-action" onclick="showForm()">❤️ SIM, EU VOU!</button>
+                    <button class="btn-action btn-secondary" onclick="alert('Que pena! A floresta sentirá sua falta. 😢')">😢 NÃO PODEREI IR</button>
+                </div>
+                
+                <div id="rsvp-form" class="rsvp-form">
+                    <div class="form-group">
+                        <label>Nome do Convidado Principal:</label>
+                        <input type="text" id="rsvp-nome" placeholder="Seu nome completo">
+                    </div>
+                    
+                    <div class="form-group" style="display: flex; justify-content: space-between; align-items: center;">
+                        <label style="margin:0;">Qtd. de Adultos:</label>
+                        <div class="counter-control">
+                            <button class="counter-btn" onclick="updateCounter('adultos', -1)">-</button>
+                            <span class="counter-value" id="val-adultos">1</span>
+                            <button class="counter-btn" onclick="updateCounter('adultos', 1)">+</button>
+                        </div>
+                    </div>
+
+                    <div class="form-group" style="display: flex; justify-content: space-between; align-items: center;">
+                        <label style="margin:0;">Qtd. de Crianças:</label>
+                        <div class="counter-control">
+                            <button class="counter-btn" onclick="updateCounter('criancas', -1)">-</button>
+                            <span class="counter-value" id="val-criancas">0</span>
+                            <button class="counter-btn" onclick="updateCounter('criancas', 1)">+</button>
+                        </div>
+                    </div>
+                    
+                    <!-- Substitua o número do WhatsApp abaixo -->
+                    <button class="btn-action" onclick="sendWhatsApp('5521964823664')">CONFIRMAR PRESENÇA</button>
+                </div>
+                <div id="rsvp-success" style="display: none; text-align: center; margin-top: 20px; color: var(--dark-red); font-weight: bold;">
+                    Oba! A Chapeuzinho Vermelho já sabe que você vem! ❤️
+                </div>
+            </div>
+        </section>
+
+        <!-- SEÇÃO 6: PISCINA -->
+        <section id="piscina" class="reveal">
+            <div class="wave-top">
+                <svg viewBox="0 0 500 50" preserveAspectRatio="none">
+                    <path d="M0,20 C150,50 350,0 500,20 L500,0 L0,0 Z" style="fill: var(--moss-green);"></path>
+                </svg>
+            </div>
+            
+            <div style="text-align: center; position: relative; z-index: 2;">
+                <span style="font-size: 3rem; display: block; margin-bottom: 10px;" class="interactive" onclick="this.classList.add('wiggle-anim'); setTimeout(()=>this.classList.remove('wiggle-anim'), 500)">💦 🛟 👙</span>
+                <h2 style="margin-bottom: 15px;">PREPARE-SE PARA A DIVERSÃO!</h2>
+                
+                <div class="paper-card" style="background: rgba(255,255,255,0.9); border-color: var(--pool-blue);">
+                    <h3 style="color: var(--red-cap); font-size: 1.6rem; margin-bottom: 10px;">TRAGA SUA ROUPA DE BANHO!</h3>
+                    <p style="font-weight: bold; color: var(--pool-dark);">A DIVERSÃO TAMBÉM É NA PISCINA!</p>
+                </div>
+            </div>
+            
+            <!-- Gotas de Água Animadas via JS -->
+            <div id="water-drops"></div>
+        </section>
+
+        <!-- SEÇÃO 7: FINAL -->
+        <section id="fim" class="reveal">
+            <div style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none;" id="night-fireflies"></div>
+            
+            <div style="position: relative; z-index: 2;">
+                <h2 style="font-size: 2.2rem; margin-bottom: 20px; color: var(--gold);">Obrigado por fazer parte dessa história!</h2>
+                
+                <p style="font-size: 1.3rem; margin-bottom: 30px; font-weight: bold;">LÍVIA ESPERA POR VOCÊ! ❤️</p>
+                
+                <a href="#rsvp" class="btn-action" style="width: auto; padding: 10px 40px; font-size: 1rem;">Confirmar Presença</a>
+                
+                <p style="margin-top: 40px; font-size: 0.9rem; font-style: italic; opacity: 0.8;">
+                    Era uma vez...<br>e essa história está apenas começando.
+                </p>
+                
+                <p style="margin-top: 30px; font-size: 0.8rem; opacity: 0.6;">Sua presença é o nosso maior presente.</p>
+            </div>
+        </section>
+
+    </div>
+
+    <script>
+        // ==========================================
+        // CONTROLE DE FLUXO E MÍDIA (VÍDEO/ÁUDIO)
+        // ==========================================
+        const audio = document.getElementById('bg-audio');
+        const video = document.getElementById('intro-video');
+        const overlay = document.getElementById('video-overlay');
+        const btnAudio = document.getElementById('btn-audio');
+        
+        let isAudioPlaying = false;
+
+        function startExperience() {
+            // Esconde texto da hero
+            document.querySelector('.hero h1').style.display = 'none';
+            document.querySelector('.hero h2').style.display = 'none';
+            document.querySelector('.hero .subtitle').style.display = 'none';
+            document.querySelector('.btn-enter').style.display = 'none';
+            
+            // Mostra o vídeo em tela cheia
+            overlay.classList.remove('hidden');
+            
+            // Tenta tocar o vídeo
+            video.play().catch(e => {
+                console.log("Auto-play do vídeo bloqueado, pulando para a página.", e);
+                closeVideo();
+            });
+            
+            // Tenta tocar o áudio ambiente
+            audio.volume = 0.4;
+            audio.play().then(() => {
+                isAudioPlaying = true;
+                btnAudio.style.display = 'flex';
+                updateAudioIcon();
+            }).catch(e => console.log("Áudio auto-play bloqueado.", e));
+            
+            // Ocultar overlay quando vídeo terminar
+            video.onended = function() {
+                closeVideo();
+            };
+        }
+
+        function closeVideo() {
+            video.pause();
+            overlay.classList.add('hidden');
+            // Rolar suavemente para a seção 1
+            document.getElementById('historia').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function toggleAudio() {
+            if (isAudioPlaying) {
+                audio.pause();
+                isAudioPlaying = false;
+            } else {
+                audio.play();
+                isAudioPlaying = true;
+            }
+            updateAudioIcon();
+        }
+
+        function updateAudioIcon() {
+            btnAudio.innerHTML = isAudioPlaying ? '🔊' : '🔇';
+        }
+
+        // ==========================================
+        // MENU FLUTUANTE (FAB)
+        // ==========================================
+        function toggleFab() {
+            document.getElementById('fab-menu').classList.toggle('open');
+        }
+
+        // ==========================================
+        // CONTAGEM REGRESSIVA
+        // ==========================================
+        // Data da festa: 30 de Agosto de 2026, 14:00:00
+        const countDownDate = new Date("Aug 30, 2026 14:00:00").getTime();
+
+        const x = setInterval(function() {
+            const now = new Date().getTime();
+            const distance = countDownDate - now;
+
+            if (distance < 0) {
+                clearInterval(x);
+                document.getElementById("countdown").style.display = "none";
+                document.getElementById("cd-hoje").style.display = "block";
+                return;
+            }
+
+            const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+            const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+            const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+            document.getElementById("cd-days").innerText = days.toString().padStart(2, '0');
+            document.getElementById("cd-hours").innerText = hours.toString().padStart(2, '0');
+            document.getElementById("cd-mins").innerText = minutes.toString().padStart(2, '0');
+            document.getElementById("cd-secs").innerText = seconds.toString().padStart(2, '0');
+        }, 1000);
+
+        // ==========================================
+        // RSVP FORMULÁRIO E WHATSAPP
+        // ==========================================
+        let adultos = 1;
+        let criancas = 0;
+
+        function showForm() {
+            document.getElementById('rsvp-buttons').style.display = 'none';
+            document.getElementById('rsvp-form').classList.add('active');
+        }
+
+        function updateCounter(type, change) {
+            if (type === 'adultos') {
+                adultos += change;
+                if (adultos < 1) adultos = 1;
+                document.getElementById('val-adultos').innerText = adultos;
+            } else if (type === 'criancas') {
+                criancas += change;
+                if (criancas < 0) criancas = 0;
+                document.getElementById('val-criancas').innerText = criancas;
+            }
+        }
+
+        function sendWhatsApp(phone) {
+            const nome = document.getElementById('rsvp-nome').value.trim();
+            if (!nome) {
+                alert('Por favor, informe seu nome para a Chapeuzinho saber quem é! 🍎');
+                return;
+            }
+            
+            const text = `Olá! A Chapeuzinho Vermelho já pode me esperar na Floresta Encantada da Lívia! 🍎🌲%0A%0A*Nome:* ${nome}%0A*Adultos:* ${adultos}%0A*Crianças:* ${criancas}%0A%0AAté lá! ❤️`;
+            
+            // Abre o WhatsApp em nova aba
+            window.open(`https://wa.me/${phone}?text=${text}`, '_blank');
+            
+            // Mostra mensagem de sucesso na página
+            document.getElementById('rsvp-form').style.display = 'none';
+            document.getElementById('rsvp-success').style.display = 'block';
+        }
+
+        // ==========================================
+        // SCROLL REVEAL ANIMAÇÕES
+        // ==========================================
+        const revealElements = document.querySelectorAll('.reveal');
+        
+        const revealObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('active');
+                    // Opcional: parar de observar após revelar
+                    // revealObserver.unobserve(entry.target);
+                }
+            });
+        }, { threshold: 0.15 });
+
+        revealElements.forEach(el => revealObserver.observe(el));
+
+        // ==========================================
+        // EFEITOS DE PARTÍCULAS (MÁGICA E ÁGUA)
+        // ==========================================
+        function createParticles(containerId, count, isWater = false) {
+            const container = document.getElementById(containerId);
+            if (!container) return;
+            
+            for (let i = 0; i < count; i++) {
+                const particle = document.createElement('div');
+                
+                if (isWater) {
+                    particle.className = 'water-drop';
+                    const size = Math.random() * 8 + 5;
+                    particle.style.width = `${size}px`;
+                    particle.style.height = `${size}px`;
+                    particle.style.left = `${Math.random() * 100}%`;
+                    particle.style.animationDuration = `${Math.random() * 2 + 1.5}s`;
+                    particle.style.animationDelay = `${Math.random() * 2}s`;
+                } else {
+                    particle.className = 'firefly';
+                    particle.style.left = `${Math.random() * 100}%`;
+                    particle.style.top = `${Math.random() * 100}%`;
+                    particle.style.animationDuration = `${Math.random() * 3 + 3}s`;
+                    particle.style.animationDelay = `${Math.random() * 5}s`;
+                }
+                
+                container.appendChild(particle);
+            }
+        }
+
+        // Inicializar partículas
+        window.onload = () => {
+            createParticles('hero-particles', 20, false);
+            createParticles('night-fireflies', 30, false);
+            createParticles('water-drops', 15, true);
+        };
+    </script>
+</body>
+</html>
